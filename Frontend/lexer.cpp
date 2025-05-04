@@ -11,16 +11,16 @@ enum class TokenType {
     OPERATOR,
     KEYWORD,
     IDENTIFIER,
+    IDLE,
+    COMMENT,
 };
 
 struct Token {
     TokenType token;
 };
 
-
-
-void read_state(char current_character) {
-    
+void read_state(std::vector<char> characters) {
+     
 }
 
 int main(int argc, char* argv[]) {
@@ -32,9 +32,12 @@ int main(int argc, char* argv[]) {
     {
         std::ifstream file(argv[1]);
         std::string line;
+        std::vector<char> characters;
         while (std::getline(file, line)) {
             for (char ch : line) {
-                std::cout << ch << endl;
+                characters.push_back(ch);
+                read_state(characters);
+
             }
         }
     }
