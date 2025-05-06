@@ -1,13 +1,13 @@
 let a be 9
 let b be 3
 
-set_breakpoint("first)
+set_breakpoint("first")
 
 From 2 until 9 by 4 is {
     Let a be c
     Let b be c + 1
     say a + b
-    rewind("first, 2)
+    rewind("first", 2)
 }
 
 // code is supposed to loop through execute following code two times
