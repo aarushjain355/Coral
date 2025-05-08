@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <cctype>
 
 using namespace std;
 
@@ -39,16 +40,16 @@ struct Token {
     std::string value;
 };
 
-// Pseudocode:
-// read_state function receives current state and character vector
-// 
-
-
-
 void read_state(std::vector<char> characters, TokenType *current_state, Lexer object) {
     if (characters.at(characters.size() - 1) == ' ') {
-        for (int i = 0; i < characters.size() - 1; ++i) {
-            if (characters.at(i) == "L"
+        std::string result = "";
+        for (int i = 0; i < characters.size()-1; ++i) {
+            result += characters.at(i);
+        }
+        if (object.keywords.find(result) != object.keywords.end()) {
+            *current_state = TokenType::KEYWORD;        
+        } else {
+            *current_state = TokenType::IDENTIFIER;
         }
     }
 }
