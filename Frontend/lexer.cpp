@@ -16,6 +16,7 @@ enum class TokenType {
     IDENTIFIER,
     IDLE,
     COMMENT,
+    ERROR,
 };
 
 class Lexer {
@@ -46,7 +47,9 @@ void read_state(std::vector<char> characters, TokenType *current_state, Lexer ob
     std::string result = "";
     for (int i = 0; i < characters.size()-1; ++i) {
         if (!std::isalpha(characters.at(i))) {
-            return
+            *current_state = TokenType::ERROR;
+            object.token_list_.insert({*current_state, result});
+            break;
         }
         result += characters.at(i);
     }
@@ -55,7 +58,7 @@ void read_state(std::vector<char> characters, TokenType *current_state, Lexer ob
     } else {
         *current_state = TokenType::IDENTIFIER;
     }
-    object.token_list_.insert({*current_state, std::to_string(result)});
+    object.token_list_.insert({*current_state, result});
 
     characters.clear();
     
