@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <cctype>
+#include <map>
 
 using namespace std;
 
@@ -20,17 +21,17 @@ enum class TokenType {
 class Lexer {
 
     public:
-        std::unordered_map<std::string, bool> keywords;
-        
+        std::unordered_map<std::string, bool> keywords_;
+        std::unordered_map<TokenType, std::string> token_list_;
         Lexer() {
-            keywords["Let"] = true;
-            keywords["be"] = true;
-            keywords["set_breakpoint"] = true;
-            keywords["From"] = true;
-            keywords["until"] = true;
-            keywords["by"] = true;
-            keywords["is"] = true;
-            keywords["rewind"] = true;
+            keywords_["Let"] = true;
+            keywords_["be"] = true;
+            keywords_["set_breakpoint"] = true;
+            keywords_["From"] = true;
+            keywords_["until"] = true;
+            keywords_["by"] = true;
+            keywords_["is"] = true;
+            keywords_["rewind"] = true;
         }
 
 };
@@ -41,17 +42,23 @@ struct Token {
 };
 
 void read_state(std::vector<char> characters, TokenType *current_state, Lexer object) {
-    if (characters.at(characters.size() - 1) == ' ') {
-        std::string result = "";
-        for (int i = 0; i < characters.size()-1; ++i) {
-            result += characters.at(i);
+
+    std::string result = "";
+    for (int i = 0; i < characters.size()-1; ++i) {
+        if (!std::isalpha(characters.at(i))) {
+            return
         }
-        if (object.keywords.find(result) != object.keywords.end()) {
-            *current_state = TokenType::KEYWORD;        
-        } else {
-            *current_state = TokenType::IDENTIFIER;
-        }
+        result += characters.at(i);
     }
+    if (object.keywords_.find(result) != object.keywords_.end()) {
+        *current_state = TokenType::KEYWORD;        
+    } else {
+        *current_state = TokenType::IDENTIFIER;
+    }
+    object.token_list_.insert({*current_state, std::to_string(result)});
+
+    characters.clear();
+    
 }
 
 int main(int argc, char* argv[]) {
@@ -61,7 +68,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     {
-
         std::ifstream file(argv[1]);
         std::string line;
         std::vector<char> characters;
@@ -70,9 +76,11 @@ int main(int argc, char* argv[]) {
         TokenType* current_state = &initial_state;
         while (std::getline(file, line)) {
             for (char ch : line) {
-                characters.push_back(ch);
-                read_state(characters, current_state, obj1);
-
+                if (ch == ' ') {
+                    read_state(characters, current_state, obj1);
+                } else {
+                    characters.push_back(ch);
+                }    
             }
         }
     }
