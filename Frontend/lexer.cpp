@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <cctype>
 #include <map>
+#include <sstream>
 
 using namespace std;
 
@@ -19,10 +20,14 @@ enum class TokenType {
     ERROR,
 };
 
+// TOOK CARE OF KEYWORD, ERROR, IDENTIFIER, IDLE, OPERATOR
+// Need to take care of number, float, operator, and comment 
+
 class Lexer {
 
     public:
         std::unordered_map<std::string, bool> keywords_;
+        std::unordered_map<char, bool> operators_;
         std::unordered_map<TokenType, std::string> token_list_;
         Lexer() {
             keywords_["Let"] = true;
@@ -33,8 +38,11 @@ class Lexer {
             keywords_["by"] = true;
             keywords_["is"] = true;
             keywords_["rewind"] = true;
+            operators_['+'] = true;
+            operators_['-'] = true;
+            operators_['*'] = true;
+            operators_['/'] = true;
         }
-
 };
 
 struct Token {
@@ -42,26 +50,37 @@ struct Token {
     std::string value;
 };
 
-void read_state(std::vector<char> characters, TokenType *current_state, Lexer object) {
+void read_string_state(std::vector<char> characters, TokenType *current_state, Lexer object) {
 
     std::string result = "";
-    for (int i = 0; i < characters.size()-1; ++i) {
-        if (!std::isalpha(characters.at(i))) {
-            *current_state = TokenType::ERROR;
-            object.token_list_.insert({*current_state, result});
-            break;
-        }
-        result += characters.at(i);
-    }
-    if (object.keywords_.find(result) != object.keywords_.end()) {
-        *current_state = TokenType::KEYWORD;        
-    } else {
-        *current_state = TokenType::IDENTIFIER;
-    }
-    object.token_list_.insert({*current_state, result});
+    if (object.operators_.find(characters.at(0)) != object.operators_.end()) {
+        *current_state = TokenType::OPERATOR; 
+        object.token_list_.insert({*current_state, std::string(1, characters.at(0))});
+        characters.clear();
 
-    characters.clear();
+    } else {
+        // Add in comment code somewhere here
+        for (int i = 0; i < characters.size()-1; ++i) {
+            if (!std::isalpha(characters.at(i))) {
+                *current_state = TokenType::ERROR;
+                object.token_list_.insert({*current_state, result});
+                break;
+            }
+            result += characters.at(i);
+        }
+        if (object.keywords_.find(result) != object.keywords_.end()) {
+            *current_state = TokenType::KEYWORD;        
+        } else {
+            *current_state = TokenType::IDENTIFIER;
+        }
+        object.token_list_.insert({*current_state, result});
+    }
+   
     
+}
+
+void read_numerical_state(std::vector<char> characters, TokenType *current_state, Lexer object) {
+    characters.push_back()
 }
 
 int main(int argc, char* argv[]) {
@@ -80,9 +99,10 @@ int main(int argc, char* argv[]) {
         while (std::getline(file, line)) {
             for (char ch : line) {
                 if (ch == ' ') {
-                    read_state(characters, current_state, obj1);
-                } else {
-                    characters.push_back(ch);
+                    read_string_state(characters, current_state, obj1);
+                } else if (std::isdigit(ch)) {
+                    read_numerical_state(characters, current_state, obj1);
+                    // Add code for detecting a float or a double
                 }    
             }
         }
