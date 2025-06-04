@@ -10,4 +10,5 @@ From 2 until 9 by 4 is {
     rewind("first, 2)
 }
 
-// code is supposed to loop through 
+// code is supposed to loop through execute following code two times
+

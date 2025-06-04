@@ -22,7 +22,6 @@ enum class TokenType {
 
 // TOOK CARE OF KEYWORD, ERROR, IDENTIFIER, IDLE, OPERATOR
 // Need to take care of number, float, operator, and comment
-
 class Lexer {
 
     public:
@@ -50,31 +49,45 @@ struct Token {
     std::string value;
 };
 
+bool is_number(const std::string& str) {
+    try {
+        size_t pos;
+        std::stod(str, &pos);  // Try converting to double
+        return pos == str.length();  // True only if whole string was parsed
+    } catch (...) {
+        return false;  // Conversion failed
+    }
+}
+
 void read_string_state(std::vector<char> characters, TokenType *current_state, Lexer object) {
 
     std::string result = "";
     if (characters.size() > 0 && object.operators_.find(characters.at(0)) != object.operators_.end()) {
         *current_state = TokenType::OPERATOR; 
-        object.token_list_.insert({*current_state, std::string(1, characters.at(0))});
-        
+        object.token_list_.insert(std::make_pair(*current_state, std::string(1, characters.at(0))));
+
 
     } else {
         // Add in comment code somewhere here
         for (int i = 0; i < characters.size()-1; ++i) {
             if (!std::isalpha(characters.at(i))) {
-                // write code to detect integer vs a double
+              
                 *current_state = TokenType::ERROR;
-                object.token_list_.insert({*current_state, result});
+                object.token_list_.insert(std::make_pair(*current_state, result));
                 break;
             }
             result += characters.at(i);
         }
+         std::size_t pos;
+            double num = std::stod(result, &pos);
         if (object.keywords_.find(result) != object.keywords_.end()) {
             *current_state = TokenType::KEYWORD;        
+        } else if (is_number(result)) {
+            *current_state = TokenType::NUMBER;
         } else {
             *current_state = TokenType::IDENTIFIER;
         }
-        object.token_list_.insert({*current_state, result});
+        object.token_list_.insert(std::make_pair(*current_state, result));
     }
     characters.clear();
    
@@ -82,6 +95,16 @@ void read_string_state(std::vector<char> characters, TokenType *current_state, L
 }
 
 
+void read_float(std::vector<char> characters, TokenType *current_state, Lexer object) {
+    std::string result;
+    for (int i = 0; i < characters.size(); ++i) {
+        result += characters[i];
+    }
+    float value = std::stof(result);
+    *current_state = TokenType::FLOAT;
+    object.token_list_.insert(std::make_pair(*current_state, result));
+    characters.clear();
+} 
 
 int main(int argc, char* argv[]) {
 
@@ -96,23 +119,31 @@ int main(int argc, char* argv[]) {
         Lexer obj1 = Lexer();
         TokenType initial_state = TokenType::IDLE;
         TokenType* current_state = &initial_state;
+        bool numeric_value = false;
         while (std::getline(file, line)) {
             for (char ch : line) {
                 if (ch == ' ') {
-                    read_string_state(characters, current_state, obj1);
-                } else if (ch == '.') {
-                    if (characters.size() != 0 && characters.at(characters.size()-1).isdigit()) {
-
+                    if (numeric_value) {
+                        read_float(characters, current_state, obj1);
+                        numeric_value = false;
+                    } else {
+                        read_string_state(characters, current_state, obj1);
+                        
                     }
-                    read_numerical_state(characters, current_state, obj1);
-                    // Add code for detecting a float or a double
+                } else if (ch == '.') {
+                   numeric_value = true;
                 } else {
                     characters.push_back(ch);
                     
                 }  
             }
+            // for (const auto& pair : obj1.token_list_) {
+            //     std::cout << pair.second << std::endl;
+            // }
         }
+        
     }
+    
     return 0;
     
 }
