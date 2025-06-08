@@ -52,6 +52,7 @@ struct Token {
 bool is_number(const std::string& str) {
     try {
         size_t pos;
+       //std::cout << "Attempting to convert: '" << str << "'" << std::endl;
         std::stod(str, &pos);  // Try converting to double
         return pos == str.length();  // True only if whole string was parsed
     } catch (...) {
@@ -78,12 +79,12 @@ void read_string_state(std::vector<char> characters, TokenType *current_state, L
             }
             result += characters.at(i);
         }
-         std::size_t pos;
-            double num = std::stod(result, &pos);
         if (object.keywords_.find(result) != object.keywords_.end()) {
             *current_state = TokenType::KEYWORD;        
         } else if (is_number(result)) {
             *current_state = TokenType::NUMBER;
+            std::size_t pos;
+            double num = std::stod(result, &pos);
         } else {
             *current_state = TokenType::IDENTIFIER;
         }
@@ -100,8 +101,10 @@ void read_float(std::vector<char> characters, TokenType *current_state, Lexer ob
     for (int i = 0; i < characters.size(); ++i) {
         result += characters[i];
     }
+    std::cout << "Attempting to convert: '" << result << "'" << std::endl;
     float value = std::stof(result);
     *current_state = TokenType::FLOAT;
+    cout << "HELLO";
     object.token_list_.insert(std::make_pair(*current_state, result));
     characters.clear();
 } 
@@ -122,6 +125,7 @@ int main(int argc, char* argv[]) {
         bool numeric_value = false;
         while (std::getline(file, line)) {
             for (char ch : line) {
+                
                 if (ch == ' ') {
                     if (numeric_value) {
                         read_float(characters, current_state, obj1);
@@ -133,15 +137,19 @@ int main(int argc, char* argv[]) {
                 } else if (ch == '.') {
                    numeric_value = true;
                 } else {
+                    cout << characters.size() << endl;
                     characters.push_back(ch);
                     
                 }  
             }
-            // for (const auto& pair : obj1.token_list_) {
-            //     std::cout << pair.second << std::endl;
-            // }
+            
         }
-        
+
+        // cout << obj1.token_list_.size();
+        // for (const auto& pair : obj1.token_list_) {
+        //     std::cout << pair.second << std::endl;
+        // }
+    
     }
     
     return 0;
