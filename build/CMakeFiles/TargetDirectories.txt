@@ -1,0 +1,10 @@
+/Users/aarushjain/Desktop/coral_compiler_toolchain/build/CMakeFiles/intrinsics_gen.dir
+/Users/aarushjain/Desktop/coral_compiler_toolchain/build/CMakeFiles/vt_gen.dir
+/Users/aarushjain/Desktop/coral_compiler_toolchain/build/CMakeFiles/omp_gen.dir
+/Users/aarushjain/Desktop/coral_compiler_toolchain/build/CMakeFiles/acc_gen.dir
+/Users/aarushjain/Desktop/coral_compiler_toolchain/build/CMakeFiles/ARMTargetParserTableGen.dir
+/Users/aarushjain/Desktop/coral_compiler_toolchain/build/CMakeFiles/AArch64TargetParserTableGen.dir
+/Users/aarushjain/Desktop/coral_compiler_toolchain/build/CMakeFiles/RISCVTargetParserTableGen.dir
+/Users/aarushjain/Desktop/coral_compiler_toolchain/build/CMakeFiles/coral_compiler.dir
+/Users/aarushjain/Desktop/coral_compiler_toolchain/build/CMakeFiles/edit_cache.dir
+/Users/aarushjain/Desktop/coral_compiler_toolchain/build/CMakeFiles/rebuild_cache.dir

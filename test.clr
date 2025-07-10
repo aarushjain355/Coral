@@ -1,0 +1,6 @@
+Let a be 9
+
+if x == 10 {
+  Let y be 5
+  set_breakpoint("debug_point")
+}
