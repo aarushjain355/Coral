@@ -23,6 +23,15 @@
 using namespace llvm;
 using namespace ASTNODES;
 
+
+enum VarType {
+    INT,
+    FLOAT,
+    STRING,
+};
+
+// MAY NEED TO MAKE A UTILITIES MODULE IN ANOTHER FOLDER - WHO KNOWS
+
 class IRGenerationFromAst {
 
     public:
@@ -39,6 +48,8 @@ class IRGenerationFromAst {
         template <typename T>
         void IRgenerateRewind(RewindNode<T>* rewind_node_);
         void IRgenerateBreakPoint();
+        template <typename T>
+        void ExpressionToLLVM(Expression<T> *expr);
 
     private:
         ProgramNode* program_node_;    

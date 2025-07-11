@@ -99,32 +99,35 @@ void IRGenerationFromAst::IRgenerateAssignment(AssignmentNode<T>* assignment_nod
             allocated = Builder.CreateAlloca(
                 llvm::Type::getFloatTy(context_), nullptr, variable);
             namedValues[variable] = allocated;
-        } else constexpr (std::is_same_v<T, std::string>) {
+        } else if constexpr (std::is_same_v<T, std::string>) {
             llvm::Type* str_type = llvm::PointerType::get(llvm::Type::getInt8Ty(context_), 0);
             allocated = Builder.CreateAlloca(str_type, nullptr, variable);
             namedValues[variable] = allocated;
         }
         
-        // if (std::holds_alternative<T>(assignment_node_->assignable)) {
-        //     T value = std::get<T>(assignment_node_->assignable);
-        //     // generate IR appropriate for the type
-        // } else if (std::holds_alternative<Expression<T>>(assignment_node_->assignable)) {
-        //     Expression<T> expr = std::get<Expression<T>>(assignment_node_->assignable);
-        //     // write an algorithm for generating IR for the whole expression
-        // }
-        // Allocate space on stack using AllocaInst
+        if (std::holds_alternative<T>(assignment_node_->assignable)) {
+            T value = std::get<T>(assignment_node_->assignable);
+            Builder.CreateStore(value, allocated);
+        } else if (std::holds_alternative<Expression<double>>(assignment_node_->assignable) 
+        || std::holds_alternative<Expression<double>>(assignment_node_->assignable))
+        {
+            Expression<T> expr = std::get<Expression<T>>(assignment_node_->assignable);
+            // write an algorithm for generating IR for the whole expression
+        }
+        
+        
     }
 
-    // Need to keep in mind Allocation and Storage
-
-    // TODO
-    // 1. Get the variable name
-    // 2. Use AllocaInst to allocate variable space on stack - size depends on var
-    // 3. Use llvm storeinst to store initial value into allocated mem
-    // 4. use llvm to create initial value
-    // 5. Check if it exists in the stack already (redefinement or not)
-    // 5. return pointer to allocated memory
 }
+
+template<typename T>
+void IRGenerationFromAst::ExpressionToLLVM(Expression<T> *expr) 
+{
+    
+    for (size_t i = 0; i < expr->operands.size(); i++) {
+        i
+    }
+}; 
 
 // Implementation Plan
 
